@@ -12,7 +12,7 @@ public class Config implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // Allow all origins, all paths, and all methods
         registry.addMapping("/**")
-                .allowedOrigins("http://192.168.247.21")  // Allow frontend (adjust port as necessary)
+                .allowedOriginPatterns("*")  // Allow frontend (adjust port as necessary)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // Specify allowed HTTP methods
                 .allowedHeaders("*")  // Allow any headers
                 .allowCredentials(true);  // Allow credentials (cookies, etc.)

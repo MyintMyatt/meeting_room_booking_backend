@@ -1,9 +1,9 @@
 package com.example.MeetingRequestDemo.DTOs;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Getter
 @Setter
@@ -11,6 +11,17 @@ import lombok.Setter;
 @NoArgsConstructor
 public class HODbookingActionDTO {
 
-    private String admin;
-    private String comment;
+    @JsonProperty("HOD")
+    @NotNull(message = "hod name or email must not be null.")
+    private String HOD;
+
+
+    @JsonProperty("HODcomment")
+    @NotNull(message = "hod comment must not be null.")
+    @Size(min = 3, message = "HOD comment must be 3 characters at least")
+    private String HODcomment;
+
+    @JsonProperty("status")
+    @NotNull(message = "status must not be null.")
+    private String status;
 }

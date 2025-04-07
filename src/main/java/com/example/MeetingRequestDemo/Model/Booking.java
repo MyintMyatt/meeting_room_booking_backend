@@ -1,10 +1,9 @@
 package com.example.MeetingRequestDemo.Model;
 
+import com.example.MeetingRequestDemo.Enum.BookingStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,25 +30,25 @@ public class Booking {
     @Column(name = "roomName", nullable = false, length = 100)
     private String roomName;
 
-    @Column(name = "requesterName", length = 100)
+    @Column(name = "requesterName",nullable = false, length = 100)
     private String requesterName;
 
-    @Column(name = "requestType", length = 60)
+    @Column(name = "requestType",nullable = false, length = 60)
     private String requestType;
 
-    @Column(name = "department", length = 70)
+    @Column(name = "department",nullable = false, length = 70)
     private String department;
 
-    @Column(name = "requestDesc", columnDefinition = "nvarchar(max)")
+    @Column(name = "requestDesc",nullable = false, columnDefinition = "nvarchar(max)")
     private String requestDesc;
 
-    @Column(name = "requestDate")
+    @Column(name = "requestDate", nullable = false)
     private LocalDate requestDate;
 
-    @Column(name = "startTime", length = 40)
+    @Column(name = "startTime",nullable = false, length = 40)
     private String startTime;
 
-    @Column(name = "endTime", length = 40)
+    @Column(name = "endTime",nullable = false, length = 40)
     private String endTime;
 
     @Column(name = "submittedDateTime")
@@ -79,19 +78,7 @@ public class Booking {
     @PrePersist
     protected void setBookingDate() {
         this.submittedDateTime = LocalDateTime.now();
-        this.status = "Pending";
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        if (this.status == "Approved" || this.status == "Rejected") {
-            if (this.HOD != null) {  // If HOD is making the update
-                this.HODActionDateTime = LocalDateTime.now();
-            }
-            if (this.admin != null) { // If Admin is making the update
-                this.adminActionDateTime = LocalDateTime.now();
-            }
-        }
+        this.status = String.valueOf(BookingStatus.PENDING);
     }
 
 

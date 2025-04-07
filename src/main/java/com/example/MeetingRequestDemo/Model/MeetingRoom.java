@@ -16,7 +16,7 @@ public class MeetingRoom {
     @Column(name = "sysKey")
     private Integer sysKey;
 
-    @Column(name = "roomID", insertable = false, updatable = false)
+    @Column(name = "roomID", insertable = false, updatable = false, unique = true)
     private String roomID;
 
     @Column(name = "name", nullable = false)
