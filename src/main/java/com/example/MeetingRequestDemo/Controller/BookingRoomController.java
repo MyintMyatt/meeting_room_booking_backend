@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,7 +35,7 @@ public class BookingRoomController {
         return ResponseEntity.ok(roomBookingService.getAllBooking());
     }
 
-    @CrossOrigin(origins = "*")
+
     @GetMapping("/searchBooking/{bookingID}")
     public ResponseEntity<BookingDetailsDTO> findBooking(@PathVariable String bookingID) {
        Optional<BookingDetailsDTO> optionalBookingDTO = roomBookingService.findBooking(bookingID);
@@ -46,7 +48,7 @@ public class BookingRoomController {
     }
 
     @PutMapping("/hod/{bookingID}")
-    public ResponseEntity<String> actsByHOD(@PathVariable String bookingID,@Valid @RequestBody HODbookingActionDTO hoDbookingActionDTO) {
+    public ResponseEntity<Map<String,Object>> actsByHOD(@PathVariable String bookingID,@Valid @RequestBody HODbookingActionDTO hoDbookingActionDTO) {
         if (roomBookingRepo.findByBookingID(bookingID).isPresent()) {
             return ResponseEntity.ok(roomBookingService.actsByHOD(bookingID, hoDbookingActionDTO));
         }else
@@ -54,14 +56,14 @@ public class BookingRoomController {
     }
 
     @PutMapping("/admin/{bookingID}")
-    public ResponseEntity<String> actsByAdmin(@PathVariable String bookingID, @Valid @RequestBody AdminBookingActionDTO adminBookingActionDTO) {
+    public ResponseEntity<Map<String, Object>> actsByAdmin(@PathVariable String bookingID, @Valid @RequestBody AdminBookingActionDTO adminBookingActionDTO) {
         Optional<Booking> booking = roomBookingRepo.findByBookingID(bookingID);
         System.err.println(booking.get().getStatus());
         if (booking.isPresent()) {
             if (BookingStatus.valueOf(booking.get().getStatus().toUpperCase()) == BookingStatus.APPROVED_BY_HOD){
                 return ResponseEntity.ok(roomBookingService.actsByAdmin(bookingID, adminBookingActionDTO));
             }else
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("HOD not approved yet for booking id = " + bookingID);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((Map<String, Object>) new HashMap<>().put("status", "HOD not approved yet"));
         }else return ResponseEntity.notFound().build();
     }
 
