@@ -8,6 +8,8 @@ import com.example.MeetingRequestDemo.DTOs.HODbookingActionDTO;
 import com.example.MeetingRequestDemo.Enum.BookingStatus;
 import com.example.MeetingRequestDemo.Model.Booking;
 import com.example.MeetingRequestDemo.Repository.RoomBookingRepo;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,12 @@ public class RoomBookingService {
     @Autowired
     private BookingDTOConverter bookingDTOConverter;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private EntityManager entityManager;
+
     public List<BookingDetailsDTO> getAllBooking() {
         List<Booking> bookingList = roomBookingRepo.findAll();
         return bookingList.stream().map(bookingDTOConverter::bookingToBookingDetailsDTO).collect(Collectors.toList());
@@ -37,9 +45,28 @@ public class RoomBookingService {
         return optionalBooking.map(bookingDTOConverter::bookingToBookingDetailsDTO);  // ✅
     }
 
+    /**
+     * @Transactional ensures that the method runs within a transactional context.
+     * This is required for database operations like flush() and refresh() to work properly,
+     * as they rely on the transaction management provided by Spring.
+     * Without @Transactional, Hibernate cannot guarantee the reliability of operations like
+     * persisting data and fetching computed columns, which can lead to errors such as missing (null)
+     * or null values for computed fields like 'bookingID'.
+     */
+    @Transactional
     public BookingDTO bookRoom(BookingDTO bookingDTO) {
+        //change booking to booking dto
         Booking booking = bookingDTOConverter.bookingDTOtoBooking(bookingDTO);
+        //Save the booking in the database, but when returning the data, exclude any computed columns to prevent errors when replacing HTML content in the email service
         booking =  roomBookingRepo.save(booking);
+        // Force flush to DB to ensure insert operation is complete
+        entityManager.flush();
+        // Refresh the entity to retrieve the computed bookingID
+        entityManager.refresh(booking);
+        // Fetch again to get computed column
+        Booking b = roomBookingRepo.findById(booking.getSysKey()).orElse(null);
+        //send mail to relevant department hod
+        emailService.sendMail(b);
         return bookingDTOConverter.bookingToBookingDTO(booking);
     }
 

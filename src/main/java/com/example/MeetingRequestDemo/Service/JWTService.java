@@ -35,6 +35,7 @@ public class JWTService {
 
     public String generateToken(Users user) {
         Map<String, Object> claims = new HashMap<>();
+//        claims.put("roles", user.getRole());
         return Jwts.builder()
                 .claims()
                 .add(claims)
@@ -45,9 +46,6 @@ public class JWTService {
                 .signWith(getKey())
                 .compact();
     }
-
-    //        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ik9yaW9uIiwiaWF0IjoxNzQ0MTA4ODAwLCJleHAiOjE3NDQxMTI0MDB9.jl9VfjIOT93vaL6Aer5XB4ZMH7VpiU8pJR_41-sAoWA";
-
 
     public SecretKey getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -65,7 +63,7 @@ public class JWTService {
         return claimResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token)  {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()

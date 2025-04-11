@@ -1,7 +1,8 @@
 package com.example.MeetingRequestDemo.Config;
 
+import com.example.MeetingRequestDemo.Enum.UserRoles;
+import com.example.MeetingRequestDemo.ExceptionHandler.CustomAccessDeniedHandler;
 import com.example.MeetingRequestDemo.Service.MyUserDetailServices;
-import com.mysql.cj.protocol.AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,12 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,14 +21,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    private UserDetailsService userDetailsService;
-
     @Autowired
     private MyUserDetailServices myUserDetailServices;
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,9 +36,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/cp/login").permitAll()
+                        .requestMatchers("/cp/register", "/cp/allUsers").hasRole(UserRoles.ADMINISTRATOR.name())
+                        .requestMatchers("/cp/admin/**").hasRole(UserRoles.ADMIN.getRoleName())
+                        .requestMatchers("/cp/hod/**").hasRole(UserRoles.HOD.getRoleName())
                         .anyRequest().authenticated())
 //                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
