@@ -62,8 +62,9 @@ public class BookingRoomController {
         if (booking.isPresent()) {
             if (BookingStatus.valueOf(booking.get().getStatus().toUpperCase()) == BookingStatus.APPROVED_BY_HOD){
                 return ResponseEntity.ok(roomBookingService.actsByAdmin(bookingID, adminBookingActionDTO));
-            }else
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((Map<String, Object>) new HashMap<>().put("status", "HOD not approved yet"));
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("status", "HOD not approved yet"));
+            }
         }else return ResponseEntity.notFound().build();
     }
 

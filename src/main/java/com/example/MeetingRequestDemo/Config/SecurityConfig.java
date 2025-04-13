@@ -35,8 +35,8 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/cp/login").permitAll()
-                        .requestMatchers("/cp/register", "/cp/allUsers").hasRole(UserRoles.ADMINISTRATOR.name())
+                        .requestMatchers("/cp/register","/cp/login").permitAll()
+                        .requestMatchers( "/cp/allUsers").hasRole(UserRoles.ADMINISTRATOR.name())
                         .requestMatchers("/cp/admin/**").hasRole(UserRoles.ADMIN.getRoleName())
                         .requestMatchers("/cp/hod/**").hasRole(UserRoles.HOD.getRoleName())
                         .anyRequest().authenticated())

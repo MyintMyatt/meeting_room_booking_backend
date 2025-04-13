@@ -2,6 +2,7 @@ package com.example.MeetingRequestDemo.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "tblUsers")
@@ -13,9 +14,10 @@ import lombok.*;
 public class Users {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @GeneratedValue(generator = "user-id-generator")
+    @GenericGenerator(name = "user-id-generator", strategy = "com.example.MeetingRequestDemo.Util.UserIdGenerator")
+    @Column(name = "userID", nullable = false)
+    private String userID;
 
     @Column(name = "userEmail", nullable = false)
     private String userEmail;

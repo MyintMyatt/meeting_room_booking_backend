@@ -6,6 +6,7 @@ import com.example.MeetingRequestDemo.DTOs.BookingDTO;
 import com.example.MeetingRequestDemo.DTOs.BookingDetailsDTO;
 import com.example.MeetingRequestDemo.DTOs.HODbookingActionDTO;
 import com.example.MeetingRequestDemo.Enum.BookingStatus;
+import com.example.MeetingRequestDemo.Enum.UserRoles;
 import com.example.MeetingRequestDemo.Model.Booking;
 import com.example.MeetingRequestDemo.Repository.RoomBookingRepo;
 import jakarta.persistence.EntityManager;
@@ -66,7 +67,7 @@ public class RoomBookingService {
         // Fetch again to get computed column
         Booking b = roomBookingRepo.findById(booking.getSysKey()).orElse(null);
         //send mail to relevant department hod
-        emailService.sendMail(b);
+        emailService.sendMail(b, UserRoles.HOD);
         return bookingDTOConverter.bookingToBookingDTO(booking);
     }
 
@@ -80,6 +81,17 @@ public class RoomBookingService {
         String status = hoDbookingActionDTO.getStatus().equals(String.valueOf(BookingStatus.APPROVED_BY_HOD)) ? String.valueOf(BookingStatus.APPROVED_BY_HOD) : String.valueOf(BookingStatus.REJECTED_BY_HOD);
         roomBookingRepo.updateHODDetails(bookingID,status ,hoDbookingActionDTO.getHOD(),now, hoDbookingActionDTO.getHODcomment());
         System.err.println("Successfully updated for booking id "+bookingID);
+        // Make sure next findByBookingID fetches fresh data
+        entityManager.clear();
+        //for email body content
+        Booking booking = roomBookingRepo.findByBookingID(bookingID).orElse(null);
+        if (hoDbookingActionDTO.getStatus().toUpperCase().equals(String.valueOf(BookingStatus.APPROVED_BY_HOD))) {
+            //Approve => send mail to Admin
+            emailService.sendMail(booking, UserRoles.ADMIN);
+        }else {
+            //Reject => send mail to requester
+            emailService.sendMail(booking, UserRoles.USER);
+        }
         Map<String, Object> response = responseJSON();
         response.put("status", "Successfully updated" );
         return response;
@@ -91,6 +103,13 @@ public class RoomBookingService {
         String status = adminBookingActionDTO.getStatus().equals(String.valueOf(BookingStatus.APPROVED_BY_ADMIN)) ? String.valueOf(BookingStatus.APPROVED_BY_ADMIN) : String.valueOf(BookingStatus.REJECTED_BY_ADMIN);
         roomBookingRepo.updateAdminDetails(bookingID, status,adminBookingActionDTO.getAdmin(),now, adminBookingActionDTO.getAdminComment());
         System.err.println("Successfully updated for booking id "+bookingID);
+        // Make sure next findByBookingID fetches fresh data
+        entityManager.clear();
+        Booking booking = roomBookingRepo.findByBookingID(bookingID).orElse(null);
+        if (booking != null) {
+            //send mail to requester
+            emailService.sendMail(booking, UserRoles.USER);
+        }
         Map<String, Object> response = responseJSON();
         response.put("status", "Successfully updated" );
         return response;
