@@ -11,9 +11,9 @@ public class UserIdGenerator implements IdentifierGenerator {
         String prefix = "U";
         try {
 //            PostgreSQL , MySQL
-//            String query = "SELECT * from tblUsers ORDER BY userID DESC LIMIT 1";
+            String query = "SELECT userID from tblUsers ORDER BY userID DESC LIMIT 1";
 //            SQL
-            String query = "SELECT TOP 1 userID FROM tblUsers ORDER BY userID DESC";
+//            String query = "SELECT TOP 1 userID FROM tblUsers ORDER BY userID DESC";
             String lastId = session.createNativeQuery(query).getSingleResult().toString();
             if (lastId != null && lastId.startsWith(prefix)) {
                 int nextID = Integer.parseInt(lastId.substring(1)) + 1;

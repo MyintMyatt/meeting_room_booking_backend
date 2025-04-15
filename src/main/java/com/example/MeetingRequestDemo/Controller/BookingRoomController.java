@@ -43,8 +43,8 @@ public class BookingRoomController {
     }
 
     @PostMapping("/newBooking")
-    public ResponseEntity<BookingDTO> newBooking(@RequestBody BookingDTO bookingDTO) {
-        return ResponseEntity.ok(roomBookingService.bookRoom(bookingDTO));
+    public ResponseEntity<Map<String, String>> newBooking(@RequestBody BookingDTO bookingDTO) {
+        return roomBookingService.bookRoom(bookingDTO);
     }
 
     @PutMapping("/hod/{bookingID}")
@@ -58,7 +58,6 @@ public class BookingRoomController {
     @PutMapping("/admin/{bookingID}")
     public ResponseEntity<Map<String, Object>> actsByAdmin(@PathVariable String bookingID, @Valid @RequestBody AdminBookingActionDTO adminBookingActionDTO) {
         Optional<Booking> booking = roomBookingRepo.findByBookingID(bookingID);
-        System.err.println(booking.get().getStatus());
         if (booking.isPresent()) {
             if (BookingStatus.valueOf(booking.get().getStatus().toUpperCase()) == BookingStatus.APPROVED_BY_HOD){
                 return ResponseEntity.ok(roomBookingService.actsByAdmin(bookingID, adminBookingActionDTO));

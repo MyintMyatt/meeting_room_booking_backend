@@ -1,6 +1,7 @@
 package com.example.MeetingRequestDemo.Repository;
 
 import com.example.MeetingRequestDemo.Model.Booking;
+import com.example.MeetingRequestDemo.Model.Users;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,13 +24,16 @@ public interface RoomBookingRepo extends JpaRepository<Booking, Integer> {
     @Modifying
     @Transactional
     @Query("UPDATE Booking b SET b.status = :status, b.HOD = :HOD, b.HODActionDateTime = :HODActionDateTime, b.HODcomment = :HODcomment WHERE b.bookingID = :bookingID") // not tblBooking
-    void updateHODDetails(@Param("bookingID") String bookingID,@Param("status")String status, @Param("HOD") String HOD, @Param("HODActionDateTime")LocalDateTime HODActionDateTime, @Param("HODcomment") String HODcomment);
+    void updateHODDetails(@Param("bookingID") String bookingID,@Param("status")String status, @Param("HOD") Users HOD, @Param("HODActionDateTime")LocalDateTime HODActionDateTime, @Param("HODcomment") String HODcomment);
 
     @Modifying
     @Transactional
     @Query("UPDATE Booking b SET b.status = :status, b.admin = :admin, b.adminActionDateTime = :adminActionDateTime, b.adminComment = :adminComment WHERE b.bookingID = :bookingID") // not tblBooking
-    void updateAdminDetails(@Param("bookingID") String bookingID,@Param("status")String status, @Param("admin") String admin, @Param("adminActionDateTime")LocalDateTime adminActionDateTime, @Param("adminComment") String adminComment);
+    void updateAdminDetails(@Param("bookingID") String bookingID, @Param("status")String status, @Param("admin") Users admin, @Param("adminActionDateTime")LocalDateTime adminActionDateTime, @Param("adminComment") String adminComment);
 
+    List<Booking> findByMeetingRoomRoomIDAndRequestDate(String roomID, LocalDate requestDate);
+
+//    List<Booking> findByMeetingRoomRoomIDAndRequestDateAndStatus(String roomID, LocalDate requestDate, String status);
 
 
 }

@@ -33,9 +33,9 @@ public class BookingDetailsDTO {
 
     private String status;
 
-    private String HOD;
-
     private LocalDateTime submittedDateTime;
+
+    private String HOD;
 
     private LocalDateTime HODActionDateTime;
 

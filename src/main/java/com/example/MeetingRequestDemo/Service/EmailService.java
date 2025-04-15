@@ -32,7 +32,7 @@ public class EmailService {
 
 //    private String[] sendTo = new String[]{"flowtest@cp.com.mm", "ict-appimplement10@cp.com.mm"};
 
-    public void sendMail(Booking booking, UserRoles sendToApproval) {
+    public void sendMail(Booking booking, UserRoles sendToApproval, Users previousApprover) {
         try {
             String sendTo;
             String htmlTemplate;
@@ -44,15 +44,15 @@ public class EmailService {
                 String department = sendToApproval == UserRoles.ADMIN ? "Admin" : booking.getDepartment();
                 Users approver = userService.getApprover(department, sendToApproval.getRoleName());
                 sendTo = approver.getUserEmail();
-                htmlTemplate = fileService.readFileContentFromSources(booking, approver.getUserName(), sendToApproval);
+                htmlTemplate = fileService.readFileContentFromSources(booking, approver.getUserName(), sendToApproval, previousApprover);
                 helper.setTo(sendTo);
                 helper.setText(htmlTemplate, true);
-                System.err.println(LocalDateTime.now() + ": " + booking.getBookingID() + " => Successfully sent mail to approver " + approver.getUserName() + "(" + approver.getUserEmail() + ")" );
+                System.err.println(LocalDateTime.now() + ": " + booking.getBookingID() + " => Successfully sent mail to approver " + approver.getUserName() + "(" + approver.getUserEmail() + ")");
             } else {
-                htmlTemplate = fileService.readFileContentFromSources(booking, booking.getRequesterName(), sendToApproval);
-                helper.setTo("ict-appimplement10@cp.com.mm");
+                htmlTemplate = fileService.readFileContentFromSources(booking, booking.getRequester().getUserName(), sendToApproval, previousApprover);
+                helper.setTo(booking.getRequester().getUserEmail());
                 helper.setText(htmlTemplate, true);
-                System.err.println(LocalDateTime.now() + ": " + booking.getBookingID() + " => Successfully sent mail to " + booking.getRequesterName() + "(" + ")");
+                System.err.println(LocalDateTime.now() + ": " + booking.getBookingID() + " => Successfully sent mail to " + booking.getRequester().getUserName() + "(" + booking.getRequester().getUserEmail() + ")");
             }
             //helper.addAttachment("logo.png", new File(getClass().getResource("/templates/logo.png").toURI()));
             helper.addInline("logo.png", new File(getClass().getResource("/templates/logo.png").toURI()));

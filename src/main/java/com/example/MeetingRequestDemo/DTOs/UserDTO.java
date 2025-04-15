@@ -12,5 +12,6 @@ public class UserDTO {
     private String userEmail;
     private String userName;
     private String role;
+    private String department;
     private String token;
 }

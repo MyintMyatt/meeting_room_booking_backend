@@ -4,6 +4,8 @@ import com.example.MeetingRequestDemo.DTOs.BookingDTO;
 import com.example.MeetingRequestDemo.DTOs.BookingDetailsDTO;
 import com.example.MeetingRequestDemo.DTOs.HODbookingActionDTO;
 import com.example.MeetingRequestDemo.Model.Booking;
+import com.example.MeetingRequestDemo.Model.Users;
+import com.example.MeetingRequestDemo.Repository.UsersRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,9 @@ public class BookingDTOConverter {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private UsersRepo usersRepo;
 
     public Booking bookingDTOtoBooking(BookingDTO bookingDTO) {
         return modelMapper.map(bookingDTO, Booking.class);
@@ -34,6 +39,11 @@ public class BookingDTOConverter {
 
     //-------------------------------------------------------
     public BookingDetailsDTO bookingToBookingDetailsDTO(Booking booking) {
-        return modelMapper.map(booking, BookingDetailsDTO.class);
+        BookingDetailsDTO detailsDTO = modelMapper.map(booking, BookingDetailsDTO.class);
+        if (booking.getHOD() != null)
+            detailsDTO.setHOD(booking.getHOD().getUserEmail());
+        if (booking.getAdmin() != null)
+            detailsDTO.setAdmin(booking.getAdmin().getUserEmail());
+        return detailsDTO;
     }
 }

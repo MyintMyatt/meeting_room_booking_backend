@@ -18,6 +18,6 @@ public class MeetingRoomService {
 
     public List<MeetingRoomDTO> getAllMeetingRoom() {
 //        return  meetingRoomRepo.findAll();
-        return meetingRoomRepo.findAll().stream().map(room -> new MeetingRoomDTO(room.getRoomID(),room.getName(),room.getRoomCapacity(),room.getStatus())).collect(Collectors.toList());
+        return meetingRoomRepo.findAll().stream().map(room -> new MeetingRoomDTO(room.getRoomID(),room.getRoomName(),room.getRoomCapacity(),room.getStatus())).collect(Collectors.toList());
     }
 }

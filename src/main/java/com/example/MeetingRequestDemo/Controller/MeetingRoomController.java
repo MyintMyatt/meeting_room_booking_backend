@@ -21,9 +21,6 @@ public class MeetingRoomController {
 
     @GetMapping("/meetingRoom")
     private List<MeetingRoomDTO> getAllMeetingRoom() {
-        for (MeetingRoomDTO room : meetingRoomService.getAllMeetingRoom()) {
-            System.err.println(room.getName());
-        }
         return meetingRoomService.getAllMeetingRoom();
     }
 

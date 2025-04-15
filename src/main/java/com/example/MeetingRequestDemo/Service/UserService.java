@@ -54,7 +54,6 @@ public class UserService {
 
     public Users getApprover(String department, String role) {
         Users user = usersRepo.findByDepartmentAndRole(department, role);
-        System.err.println("Users => " + user);
         return user;
     }
 

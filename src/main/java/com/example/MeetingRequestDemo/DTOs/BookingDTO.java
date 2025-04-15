@@ -1,10 +1,10 @@
 package com.example.MeetingRequestDemo.DTOs;
 
-import jakarta.persistence.Column;
+import com.example.MeetingRequestDemo.Model.MeetingRoom;
+import com.example.MeetingRequestDemo.Model.Users;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,9 +14,9 @@ public class BookingDTO {
 
     private String meetingTitle;
 
-    private String roomName;
+    private MeetingRoom meetingRoom;
 
-    private String requesterName;
+    private Users requester;
 
     private String requestType;
 

@@ -4,6 +4,7 @@ import com.example.MeetingRequestDemo.Enum.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,21 +19,21 @@ import java.time.LocalDateTime;
 public class Booking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sysKey")
-    private Integer sysKey;
-
-    @Column(name = "bookingID", insertable = false, updatable = false, unique = true)
+    @GeneratedValue(generator = "booking-id-generator")
+    @GenericGenerator(name = "booking-id-generator", strategy = "com.example.MeetingRequestDemo.Util.BookingIdGenerator")
+    @Column(name = "bookingID", insertable = false, updatable = false, unique = true, length = 50)
     private String bookingID;
 
     @Column(name = "meetingTitle",nullable = false)
     private String meetingTitle;
 
-    @Column(name = "roomName", nullable = false, length = 100)
-    private String roomName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "roomID",referencedColumnName = "roomID", nullable = false)
+    private MeetingRoom meetingRoom;
 
-    @Column(name = "requesterName",nullable = false, length = 100)
-    private String requesterName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requesterID", referencedColumnName = "userID", nullable = false)
+    private Users requester;
 
     @Column(name = "requestType",nullable = false, length = 60)
     private String requestType;
@@ -58,8 +59,9 @@ public class Booking {
     @Column(name = "status", length = 100)
     private String status;
 
-    @Column(name = "HOD", length = 100)
-    private String HOD;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "HOD", referencedColumnName = "userID")
+    private Users HOD;
 
     @Column(name = "HODActionDateTime")
     private LocalDateTime HODActionDateTime;
@@ -67,8 +69,9 @@ public class Booking {
     @Column(name = "HODcomment", columnDefinition = "nvarchar(max)")
     private String HODcomment;
 
-    @Column(name = "admin", length = 100)
-    private String admin;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin", referencedColumnName = "userID")
+    private Users admin;
 
     @Column(name = "adminActionDateTime")
     private LocalDateTime adminActionDateTime;
@@ -81,6 +84,5 @@ public class Booking {
         this.submittedDateTime = LocalDateTime.now();
         this.status = String.valueOf(BookingStatus.PENDING);
     }
-
 
 }

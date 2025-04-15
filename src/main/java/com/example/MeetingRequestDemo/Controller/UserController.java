@@ -34,12 +34,10 @@ public class UserController {
             String token = userService.verify(user);
             UserDTO userDTO = userService.getUsers(user.getUserEmail());
             userDTO.setToken(token);
-            response.put("user", userDTO);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
             System.err.println(e.getMessage());
-            response.clear();
-            response.put("error", "Invalid username or password.");
+            response.put("result", "Invalid username or password.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }

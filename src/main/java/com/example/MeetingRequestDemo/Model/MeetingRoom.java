@@ -2,6 +2,7 @@ package com.example.MeetingRequestDemo.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "tblMeetingRoom")
@@ -11,16 +12,13 @@ import lombok.*;
 @Getter
 @Setter
 public class MeetingRoom {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sysKey")
-    private Integer sysKey;
 
-    @Column(name = "roomID", insertable = false, updatable = false, unique = true)
+    @Id
+    @Column(name = "roomID", insertable = false, updatable = false, unique = true, length = 10)
     private String roomID;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "roomName", nullable = false)
+    private String roomName;
 
     @Column(name = "roomCapacity")
     private Integer roomCapacity;
