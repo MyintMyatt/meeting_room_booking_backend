@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class BookingTimeVaildator {
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
 
     public static boolean isTimeBooked(List<Booking> existingBookings, String start, String end) {
         LocalTime newStartTime = LocalTime.parse(start, timeFormatter);

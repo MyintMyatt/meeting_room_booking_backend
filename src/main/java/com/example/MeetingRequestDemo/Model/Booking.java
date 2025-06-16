@@ -41,7 +41,7 @@ public class Booking {
     @Column(name = "department",nullable = false, length = 70)
     private String department;
 
-    @Column(name = "requestDesc",nullable = false, columnDefinition = "nvarchar(max)")
+    @Column(name = "requestDesc",nullable = false, columnDefinition = "varchar(max)")
     private String requestDesc;
 
     @Column(name = "requestDate", nullable = false)
@@ -66,7 +66,7 @@ public class Booking {
     @Column(name = "HODActionDateTime")
     private LocalDateTime HODActionDateTime;
 
-    @Column(name = "HODcomment", columnDefinition = "nvarchar(max)")
+    @Column(name = "HODcomment", columnDefinition = "varchar(max)")
     private String HODcomment;
 
     @ManyToOne(fetch = FetchType.LAZY)

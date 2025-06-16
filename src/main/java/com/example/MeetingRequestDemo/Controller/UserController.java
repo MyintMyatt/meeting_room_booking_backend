@@ -48,7 +48,7 @@ public class UserController {
         return userService.registerUser(user);
     }
 
-    @PreAuthorize("hasRole('ADMINISTRATOR')")
+   // @PreAuthorize("hasRole('ADMINISTRATOR')")
     @GetMapping("/allUsers")
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
